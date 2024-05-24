@@ -1,8 +1,10 @@
+const { httpUrlHandler } = require("./httpHandlers.js");
 const net = require("net");
 
 const server = net.createServer((socket) => {
-  socket.on("data", () => {
-    socket.write("HTTP/1.1 200 OK\r\n\r\n");
+  socket.on("data", (data) => {
+    const httpResponse = httpUrlHandler(data.toString());
+    socket.write(httpResponse);
   });
 
   socket.on("close", () => {
