@@ -20,6 +20,11 @@ const httpResponse = (request) => {
   } else if (url.includes("/echo/")) {
     const body = echoMessage(url);
     const header = httpHeader(body, "text/plain");
+
+    if (headers[2].includes("Accept-Encoding")) {
+      const encoding = acceptEncoding(headers[2]);
+      return `${OK_MESSAGE}\r\n${encoding}\r\n${header}\r\n\r\n${body}`;
+    }
     return `${OK_MESSAGE}\r\n${header}\r\n\r\n${body}`;
   } else if (url.includes("/files/") && reqMethod === "GET") {
     const filename = url.split("/files/")[1];
@@ -62,6 +67,11 @@ const retrieveUserAgent = (request) => {
     .find((s) => s.startsWith("User-Agent"))
     .split(" ")[1];
   return agentValue;
+};
+
+const acceptEncoding = (compressionType) => {
+  const type = compressionType.split(" ")[1];
+  return type === "gzip" ? "Content-Encoding: gzip" : "";
 };
 
 module.exports = { httpResponse };
