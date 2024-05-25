@@ -3,8 +3,7 @@ const net = require("net");
 
 const server = net.createServer((socket) => {
   socket.on("data", (data) => {
-    const response = httpResponse(data.toString());
-    socket.write(response);
+    httpResponse(data.toString(), socket);
   });
 
   socket.on("close", () => {

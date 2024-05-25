@@ -27,15 +27,12 @@ const httpResponse = (request, socket) => {
     if (headers[2].includes("Accept-Encoding")) {
       const encoding = acceptEncoding(headers[2].split(":").join());
       if (encoding.exists) {
-        //
-        //
-        //
-
-        const { gzipBody, gzipBodyLength } = encodeGzip(body);
-        const responseHeader = httpHeader(gzipBodyLength, "text/plain", false);
+        const bodyBuffer = Buffer.from(body, "binary");
+        const gzipBody = zlib.gzipSync(bodyBuffer);
+        const gzipBodyLength = gzipBody.length;
 
         socket.write(
-          `${OK_MESSAGE}\r\n${encoding.header}\r\n${responseHeader}\r\n\r\n`
+          `${OK_MESSAGE}\r\n${encoding.header}\r\nContent-Type: plain/text\r\nContent-Length: ${gzipBodyLength}\r\n\r\n`
         );
         socket.write(gzipBody);
         return;
@@ -97,14 +94,6 @@ const acceptEncoding = (encodingHeader) => {
   return values.includes("gzip")
     ? { header: "Content-Encoding: gzip", exists: true }
     : { header: "", exists: false };
-};
-
-const encodeGzip = (text) => {
-  const bodyBuffer = Buffer.from(text, "binary");
-  const gzipBody = zlib.gzipSync(bodyBuffer);
-  const gzipBodyLength = gzipBody.length;
-
-  return { gzipBody, gzipBodyLength };
 };
 
 module.exports = { httpResponse };
