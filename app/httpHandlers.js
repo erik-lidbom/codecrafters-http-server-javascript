@@ -22,7 +22,7 @@ const httpResponse = (request) => {
     const header = httpHeader(body, "text/plain");
 
     if (headers[2].includes("Accept-Encoding")) {
-      const encoding = acceptEncoding(headers[2]);
+      const encoding = acceptEncoding(headers[2].split(":").join());
       return `${OK_MESSAGE}\r\n${encoding}\r\n${header}\r\n\r\n${body}`;
     }
     return `${OK_MESSAGE}\r\n${header}\r\n\r\n${body}`;
@@ -69,9 +69,9 @@ const retrieveUserAgent = (request) => {
   return agentValue;
 };
 
-const acceptEncoding = (compressionType) => {
-  const type = compressionType.split(" ")[1];
-  return type === "gzip" ? "Content-Encoding: gzip" : "";
+const acceptEncoding = (encodingHeader) => {
+  const values = encodingHeader.split(", ");
+  return values.includes("gzip") ? "Content-Encoding: gzip" : "";
 };
 
 module.exports = { httpResponse };
