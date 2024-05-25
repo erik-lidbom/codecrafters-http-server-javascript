@@ -27,10 +27,6 @@ const httpResponse = (request, socket) => {
     if (headers[2].includes("Accept-Encoding")) {
       const encoding = acceptEncoding(headers[2].split(":").join());
       if (encoding.exists) {
-        //
-        //
-        //
-
         const { gzipBody, gzipBodyLength } = encodeGzip(body);
         const responseHeader = httpHeader(gzipBodyLength, "text/plain", false);
 
