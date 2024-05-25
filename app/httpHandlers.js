@@ -21,7 +21,7 @@ const httpResponse = (request) => {
     const body = echoMessage(url);
     const header = httpHeader(body, "text/plain");
 
-    if (headers[2].includes("Accept-Encoding")) {
+    if (headers[2].toLowerCase().includes("accept-encoding")) {
       const encoding = acceptEncoding(headers[2]);
       return `${OK_MESSAGE}\r\n${encoding}\r\n${header}\r\n\r\n${body}`;
     }
